@@ -1,5 +1,6 @@
 const tileDisplay = document.querySelector('.tile-container');
 const keyboard = document.querySelector('.key-container');
+const messageDisplay = document.querySelector('.message-container');
 const word = 'HELLO';
 
 const keys = [
@@ -19,6 +20,7 @@ const guessRows = [
 
 let currentRow = 0;
 let currentTile = 0;
+let isGameOver = false;
 
 guessRows.forEach((guessRow, guessRowIndex) => {
     const rowElement = document.createElement('div');
@@ -35,22 +37,85 @@ guessRows.forEach((guessRow, guessRowIndex) => {
 });
 
 const addLetter = (letter) => {
-    const tile = document.getElementById('guessRow-' + currentRow + '-tile-' + currentTile);
-    tile.textContent = letter;
-    guessRows[currentRow][currentTile] = letter;
-    tile.setAttribute('data', letter);
-    console.log('guessRows: ', guessRows);
-    currentTile++;
+    if(currentTile < 5 && currentRow < 6) {
+        const tile = document.getElementById('guessRow-' + currentRow + '-tile-' + currentTile);
+        tile.textContent = letter;
+        guessRows[currentRow][currentTile] = letter;
+        tile.setAttribute('data', letter);
+        currentTile++;
+        console.log('guessRows: ', guessRows);
+    }
+}
+
+const deleteLetter = () => {
+    if(currentTile > 0) {
+        currentTile--;
+        const tile = document.getElementById('guessRow-' + currentRow + '-tile-' + currentTile);
+        tile.textContent = '';
+        guessRows[currentRow][currentTile] = '';
+        tile.setAttribute('data', '');
+    }
+}
+
+const showMessage = (message) => {
+    const messageElement = document.createElement('p');
+    messageElement.textContent = message;
+    messageDisplay.append(messageElement);
+    setTimeout(() => {
+        messageDisplay.removeChild(messageElement);
+    }, 2000);
+}
+
+const flipTile = () => {
+    const rowTiles = document.querySelector('#guessRow-' + currentRow).childNodes;
+    rowTiles.forEach((tile, index) => {
+        const dataLetter = tile.getAttribute('data');
+
+        setTimeout(() => {
+            tile.classList.add('flip');
+            if(dataLetter == word[index]) {
+                tile.classList.add('green-overlay');
+            } else if(word.includes(dataLetter)) {
+                tile.classList.add('yellow-overlay');
+            } else {
+                tile.classList.add('grey-overlay');
+            }
+        }, 500 * index);
+    });
+}
+
+const checkRow = () => {
+    const guess = guessRows[currentRow].join('');
+    
+    if(currentTile > 4) {
+        console.log('Guess: ' + guess + ' Word: ' + word);
+        flipTile();
+        if(guess === word) {
+            showMessage("You Win!");
+            isGameOver = true;
+            return;
+        } else {
+            if(currentRow >= 5) {
+                showMessage("You Lose!");
+                isGameOver = true;
+                return;
+            }
+            if(currentRow < 5) {
+                currentRow++;
+                currentTile = 0;
+            }
+        }
+    }
 }
 
 const handleClick = (letter) => {
     //console.log('Clicked ' + letter);
     if(letter === '<<') {
-        console.log('Delete letter');
+        deleteLetter();
         return;
     }
     if(letter === 'ENTER') {
-        console.log('Check the row');
+        checkRow();
         return;
     }
     addLetter(letter);
