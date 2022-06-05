@@ -1,7 +1,23 @@
 const tileDisplay = document.querySelector('.tile-container');
 const keyboard = document.querySelector('.key-container');
 const messageDisplay = document.querySelector('.message-container');
-const word = 'POEMA';
+//let word = 'POEMA';
+let word = palavras5[Math.floor(Math.random() * palavras5.length)].toUpperCase();
+console.log(word);
+
+// const getWord = () => {
+//     //fetch('http://14.10.81.227:8000/word')
+//     fetch('http://localhost:8000/word')
+//         .then(response => response.json())
+//         .then(json => {
+//             console.log(json);
+//             word = json.toUpperCase();
+//         })
+//         .catch(err => console.error(err));
+// }
+
+// // Start the game
+// getWord();
 
 const keys = [
     'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
